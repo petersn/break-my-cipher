@@ -1,0 +1,10 @@
+{
+  "name": "break-my-cipher",
+  "version": "0.0.1",
+  "description": "Tool for automated cryptanalysis of block ciphers.",
+  "scripts": {},
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "draw2d": "^1.0.18"
+  }
+}

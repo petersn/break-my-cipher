@@ -1,0 +1,71 @@
+
+main: top_level+
+
+top_level: definition
+	| block
+
+definition: "define" IDENT "=" SIGNED_NUMBER
+
+block: "block" IDENT "(" arg_spec_list ")" "->" "("? type_list ")"? "{" statement* "}"
+
+arg_spec_list:
+	| arg_spec ("," arg_spec)* ","?
+
+arg_spec: IDENT ":" type_expr
+
+?type_expr: type_bits
+	| type_array
+	| type_int
+
+type_bits: "@" const_expr
+type_array: "[" const_expr "x" type_expr "]"
+type_int: "int"
+
+?const_expr: const_var
+	| const_num
+
+const_var: IDENT
+const_num: SIGNED_NUMBER
+
+type_list:
+	| type_expr ("," type_expr)* ","?
+
+statement: assignment
+	| return_statement
+
+assignment:	expr ASSIGNMENT_KIND expr ";"
+
+return_statement: "return" expr ";"
+
+ASSIGNMENT_KIND: "=" | "+=" | "-=" | "^=" | "|=" | "&=" | "<<=" | ">>=" | "<<<=" | ">>>="
+
+?expr: expr_var
+	| expr_app
+	| expr_tuple
+	| expr_index
+	| expr_slice
+	| "(" expr ")"
+
+expr_var: IDENT
+
+expr_app: expr "(" arg_list ")"
+
+arg_list:
+	| expr ("," expr)* ","?
+
+expr_tuple: "[" "]"
+	| "[" expr ("," expr)* ","? "]"
+
+expr_index: expr "[" const_expr "]"
+
+expr_slice: expr "[" const_expr ":" const_expr "]"
+
+IDENT: /[a-zA-Z_][a-zA-Z0-9_]*/
+COMMENT: "#" /[^\n]/*
+
+%import common.ESCAPED_STRING
+%import common.SIGNED_NUMBER
+%import common.WS
+%ignore WS
+%ignore COMMENT
+

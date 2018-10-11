@@ -1,0 +1,27 @@
+# Simple example cipher.
+
+define W = 16
+
+block mix(x: [2 x @W], r: int) -> [2 x @W] {
+	x[0] += x[1];
+	x[1] <<<= r;
+	x[1] ^= x[0];
+	return x;
+}
+
+block permute(x: [4 x @W]) -> [4 x @W] {
+	return [x[1], x[3], x[0], x[2]];
+}
+
+block main(in: [4 x @W], key: [4 x @W]) -> [4 x @W] {
+	# Initial key whitening.
+	in ^= key;
+	in[0:2] = mix(in[0:2], 7);
+	in[2:4] = mix(in[2:4], 11);
+	in = permute(in);
+	in[0:2] = mix(in[0:2], 9);
+	in[2:4] = mix(in[2:4], 14);
+	in += key;
+	return in;
+}
+
